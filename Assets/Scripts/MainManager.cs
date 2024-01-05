@@ -11,23 +11,13 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+	public Text BestScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
-
-	//make this object accessible from any scenes and sessions
-    public static MainManager Instance;
-
-	//make this object available in different scenes and sessions, don't destroy this object on loading
-	private void Awake()
-	{
-		Instance = this;
-		DontDestroyOnLoad(gameObject);
-
-	}
 
     // Start is called before the first frame update
     void Start()
@@ -62,6 +52,8 @@ public class MainManager : MonoBehaviour
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
+
+			BestScoreText.text = $"Best Score : {ScoreKeeper.Instance.FirstPlayerName} : {ScoreKeeper.Instance.FirstHighestPoints}";
         }
         else if (m_GameOver)
         {
@@ -69,6 +61,8 @@ public class MainManager : MonoBehaviour
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
+
+			BestScoreText.text = $"Best Score : {ScoreKeeper.Instance.FirstPlayerName} : {ScoreKeeper.Instance.FirstHighestPoints}";
         }
     }
 
@@ -80,6 +74,18 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+		if(m_Points > ScoreKeeper.Instance.SecondHighestPoints)
+		{
+			ScoreKeeper.Instance.SecondHighestPoints = m_Points;
+
+			if(ScoreKeeper.Instance.SecondHighestPoints > ScoreKeeper.Instance.FirstHighestPoints)
+			{
+				ScoreKeeper.Instance.SaveBestPlayer();
+			}
+		}
+
+		Debug.Log(ScoreKeeper.Instance.FirstHighestPoints);
+
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
