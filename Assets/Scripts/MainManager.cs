@@ -18,7 +18,17 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
-    
+	//make this object accessible from any scenes and sessions
+    public static MainManager Instance;
+
+	//make this object available in different scenes and sessions, don't destroy this object on loading
+	private void Awake()
+	{
+		Instance = this;
+		DontDestroyOnLoad(gameObject);
+
+	}
+
     // Start is called before the first frame update
     void Start()
     {
